@@ -90,7 +90,7 @@ function loader() {
         // cancelAnimationFrame(loaderAnimation);
         isCancel = true;
       });
-  }, 1500);
+  }, 2500);
 }
 
 loader();
