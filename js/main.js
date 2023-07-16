@@ -5,8 +5,8 @@ import { createWalls } from "./walls.js";
 import { createPaintings } from "./paintings.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
+import { TTFLoader } from "three/examples/jsm/loaders/TTFLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
-("../node_modules/three/examples/fonts/droid/droid_sans_bold.typeface.json");
 
 const mainGalleryEl = document.querySelector(".main-gallery");
 let focusedPainting = null;
@@ -25,7 +25,7 @@ const camera = new THREE.PerspectiveCamera(
   1,
   1000
 );
-camera.position.z = 65;
+camera.position.z = 105;
 camera.position.y = 25;
 scene.add(camera);
 
@@ -56,35 +56,33 @@ onmouseleave = (e) => {
 
 new OrbitControls(camera, renderer.domElement);
 
-new FontLoader().load(
-  "../node_modules/three/examples/fonts/droid/droid_sans_bold.typeface.json",
-  (font) => {
-    let textGeometry = new TextGeometry("FrontendMentor 3d Gallery", {
-      font,
-      size: 3,
-      height: 1,
-    });
-    let textMaterial = new THREE.MeshLambertMaterial();
-    let textMesh = new THREE.Mesh(textGeometry, textMaterial);
-    textMesh.position.y = 15;
-    textMesh.position.x = -27;
-    textMesh.position.z = -25;
-    let textLight = new THREE.SpotLight();
-    let tlHelper = new THREE.SpotLightHelper(textLight);
-    // scene.add(tlHelper);
-    let lightTarget = new THREE.Object3D();
-    lightTarget.position.set(-15, 25, -25);
-    textLight.position.set(15, 45, -65);
-    textLight.rotation.z = -Math.PI * 0.2;
-    scene.add(lightTarget);
-    textLight.target = lightTarget;
-    scene.add(textLight);
-    // textMesh.rotation.x = -Math.PI * 0.1;
-    // textMesh.rotation.y = Math.PI * 0.1;
-    // textMesh.rotation.z = Math.PI * 0.02;
-    scene.add(textMesh);
-  }
-);
+new TTFLoader().load("./fonts/VictorMono-Medium.ttf", (json) => {
+  let victorMonoFont = new FontLoader().parse(json);
+  let textGeometry = new TextGeometry("FrontendMentor 3d Gallery", {
+    font: victorMonoFont,
+    size: 3,
+    height: 1,
+  });
+  let textMaterial = new THREE.MeshLambertMaterial();
+  let textMesh = new THREE.Mesh(textGeometry, textMaterial);
+  textMesh.position.y = 15;
+  textMesh.position.x = -30;
+  textMesh.position.z = -25;
+  let textLight = new THREE.SpotLight();
+  let tlHelper = new THREE.SpotLightHelper(textLight);
+  // scene.add(tlHelper);
+  let lightTarget = new THREE.Object3D();
+  lightTarget.position.set(-15, 25, -25);
+  textLight.position.set(15, 45, -65);
+  textLight.rotation.z = -Math.PI * 0.2;
+  scene.add(lightTarget);
+  textLight.target = lightTarget;
+  scene.add(textLight);
+  // textMesh.rotation.x = -Math.PI * 0.1;
+  // textMesh.rotation.y = Math.PI * 0.1;
+  // textMesh.rotation.z = Math.PI * 0.02;
+  scene.add(textMesh);
+});
 
 function animation() {
   renderer.render(scene, camera);
