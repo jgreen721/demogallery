@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;400;800&display=swap");
+
 * {
   margin: 0;
   padding: 0;
@@ -8,21 +10,104 @@ html {
   font-size: 62.5%;
 }
 
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
 .app {
   max-width: 144rem;
   margin: 0 auto;
   border: 2px solid black;
   min-height: 100vh;
   position: relative;
+  font-family: "Nunito", sans-serif;
 }
 
 .loading-overlay,
+.main-app,
+.main-content,
 .main-gallery {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.main-content {
+  padding: 3.5rem 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.info-card {
+  /* background: white; */
+  width: 200px;
+  border-radius: 5px;
+  position: absolute;
+  overflow: hidden;
+  right: 3.5rem;
+  top: 25%;
+}
+
+.hide-info {
+  display: none;
+}
+
+.info-card-content {
+  position: relative;
+  z-index: 5;
+  padding: 2.5rem;
+}
+
+.info-card::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: white;
+  top: 0;
+  left: 0;
+  opacity: 45%;
+}
+
+.painting-title {
+  font-size: 3.25rem;
+}
+
+.description {
+  font-size: 1.5rem;
+}
+
+.features-list,
+.built-with-list {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1rem;
+}
+
+.feature-item {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.return-btn {
+  background: transparent;
+  color: white;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.25rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.return-btn:hover {
+  letter-spacing: 0.5rem;
 }
 
 .loading-overlay {

@@ -9,6 +9,12 @@ import { TTFLoader } from "three/examples/jsm/loaders/TTFLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 
 const mainGalleryEl = document.querySelector(".main-gallery");
+// const returnBtn = document.querySelector(".return-btn");
+const infoCardEl = document.querySelector(".info-card");
+const paintingTitleEl = document.querySelector(".painting-title");
+const descriptionEl = document.querySelector(".description");
+const featuresEl = document.querySelector(".features-list");
+const builtWithEl = document.querySelector(".built-with-list");
 let focusedPainting = null;
 
 //loading renderer/scene info
@@ -25,7 +31,7 @@ const camera = new THREE.PerspectiveCamera(
   1,
   1000
 );
-camera.position.z = 135;
+camera.position.z = 115;
 camera.position.y = 25;
 scene.add(camera);
 
@@ -58,12 +64,12 @@ new OrbitControls(camera, renderer.domElement);
 
 new TTFLoader().load("./fonts/VictorMono-Medium.ttf", (json) => {
   let victorMonoFont = new FontLoader().parse(json);
-  let textGeometry = new TextGeometry("FrontendMentor 3d Gallery", {
+  let textGeometry = new TextGeometry("FrontendMentor 3-d Gallery", {
     font: victorMonoFont,
     size: 3,
     height: 1,
   });
-  let textMaterial = new THREE.MeshLambertMaterial();
+  let textMaterial = new THREE.MeshLambertMaterial({ emissive: "blue" });
   let textMesh = new THREE.Mesh(textGeometry, textMaterial);
   textMesh.position.y = 15;
   textMesh.position.x = -30;
@@ -78,11 +84,17 @@ new TTFLoader().load("./fonts/VictorMono-Medium.ttf", (json) => {
   scene.add(lightTarget);
   textLight.target = lightTarget;
   scene.add(textLight);
-  // textMesh.rotation.x = -Math.PI * 0.1;
-  // textMesh.rotation.y = Math.PI * 0.1;
-  // textMesh.rotation.z = Math.PI * 0.02;
   scene.add(textMesh);
 });
+
+let spaceTexture = new THREE.TextureLoader().load("./textures/space.jpg");
+let spaceGeo = new THREE.SphereGeometry(165);
+let spaceMaterial = new THREE.MeshBasicMaterial({
+  map: spaceTexture,
+  side: THREE.DoubleSide,
+});
+let spaceSphere = new THREE.Mesh(spaceGeo, spaceMaterial);
+scene.add(spaceSphere);
 
 function animation() {
   renderer.render(scene, camera);
@@ -105,7 +117,11 @@ function animation() {
       focusedPainting = intersects[0].object;
     });
   }
+  if (focusedPainting == null) {
+    infoCardEl.classList.add("hide-info");
+  }
 
+  spaceSphere.rotation.y += 0.001;
   requestAnimationFrame(animation);
 }
 
@@ -136,12 +152,16 @@ function resetLightsToDefault(scene) {
 }
 
 onclick = (e) => {
+  if (e.target.classList == "return-btn") {
+    restoreCamera();
+    return;
+  }
+
   if (focusedPainting) {
     console.log("FocusedPainting", focusedPainting);
     tweenCameraToPainting(focusedPainting);
   } else {
     console.log("no painting in focus!!");
-    // tweenCameraToPainting(focusedPainting);
   }
 };
 
@@ -158,6 +178,7 @@ function tweenCameraToPainting(painting) {
     })
     .onComplete(() => {
       rotateCameraToPainting(painting);
+      renderDOM(painting);
     });
 }
 
@@ -175,4 +196,49 @@ function rotateCameraToPainting(painting) {
     .onComplete(() => {
       // rotateCameraToPainting(painting)
     });
+}
+
+function restoreCamera() {
+  new TWEEN.Tween(camera.position)
+    .to({ x: 0, y: 20, z: 105 }, 1000)
+    .start()
+    .onUpdate(() => {
+      camera.position.x = camera.position.x;
+      camera.position.y = camera.position.y;
+      camera.position.z = camera.position.z;
+    })
+    .onComplete(() => {
+      new TWEEN.Tween(camera.rotation)
+        .to({ x: 0, y: 0, z: 0 }, 1000)
+        .start()
+        .onUpdate(() => {
+          camera.rotation.x = camera.rotation.x;
+          camera.rotation.y = camera.rotation.y;
+          camera.rotation.z = camera.rotation.z;
+        })
+        .onComplete(() => {
+          // rotateCameraToPainting(painting)
+        });
+    });
+}
+
+function renderDOM(painting) {
+  infoCardEl.classList.remove("hide-info");
+
+  paintingTitleEl.innerHTML = painting.userData.painting;
+  descriptionEl.innerHTML = painting.userData.description;
+
+  // featuresEl
+  // builtWithEl
+  var builtWithHTML = "";
+  var featuresHTML = "";
+  painting.userData.builtWith.forEach((item) => {
+    builtWithHTML += `<li>${item}</li>`;
+  });
+  painting.userData.features.forEach((item) => {
+    featuresHTML += `<li>${item}</li>`;
+  });
+
+  builtWithEl.innerHTML = builtWithHTML;
+  featuresEl.innerHTML = featuresHTML;
 }
